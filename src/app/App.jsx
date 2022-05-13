@@ -47,7 +47,7 @@ function App() {
         new TileLayer({
           source: new OSM({
             url:
-            `https://api.mapbox.com/styles/v1/shaneraza/${style_key}/tiles/{z}/{x}/{y}?access_token=`+key,
+            "https://api.mapbox.com/styles/v1/shaneraza/cl34al4bu008j14mm8da77vhf/tiles/{z}/{x}/{y}?access_token="+key,
           }),
         }),
         new VectorLayer({
