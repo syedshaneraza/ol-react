@@ -6,7 +6,7 @@ import "ol/ol.css";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON, MVT } from "ol/format";
-import { Stroke, Style } from "ol/style";
+import { Circle, Fill, Icon, Stroke, Style, Text } from 'ol/style';
 // import VectorTileLayer from "ol/layer/VectorTile";
 // import VectorTileSource from "ol/source/VectorTile";
 import pakistanUrl from "../assets/geojson/pakistan.geojson";
@@ -24,6 +24,72 @@ import {
 
 function App() {
   const style_key = 'cl34a0h6j001814s9fnowgntz'
+  const image = new Icon({
+      anchor: [0.5, 38],
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'pixels',
+      src: './assets/maps/marker4.png',
+    });
+    const styles = {
+      Point: new Style({
+        image: image,
+      }),
+      LineString: new Style({
+        stroke: new Stroke({
+          color: '#ff0000',
+          width: 3,
+        }),
+      }),
+      MultiLineString: new Style({
+        stroke: new Stroke({
+          color: '#ff0000',
+          width: 3,
+        }),
+      }),
+      MultiPoint: new Style({
+        image: image,
+      }),
+      MultiPolygon: new Style({
+        stroke: new Stroke({
+          color: '#ff0000',
+          width: 3,
+        }),
+      }),
+      Polygon: new Style({
+        stroke: new Stroke({
+          color: '#ff0000',
+          width: 3,
+        }),
+      }),
+      GeometryCollection: new Style({
+        stroke: new Stroke({
+          color: 'magenta',
+          width: 2,
+        }),
+        fill: new Fill({
+          color: 'magenta',
+        }),
+        image: new Circle({
+          radius: 10,
+          fill: new Fill({
+            color: 'rgba(255, 255, 0, 0.1)',
+          }),
+          stroke: new Stroke({
+            color: 'magenta',
+          }),
+        }),
+      }),
+      Circle: new Style({
+        stroke: new Stroke({
+          color: 'red',
+          width: 2,
+        }),
+        fill: new Fill({
+          color: 'rgba(255, 255, 0, 0.1)',
+        }),
+      }),
+    };
+          
   const key = 'pk.eyJ1Ijoic2hhbmVyYXphIiwiYSI6ImNsMzQ5c2R0bTA1ajYzaXA3cXp4dnZya2oifQ.KFTqUVHyNQAbC8IO42zLew';
   const [map, setMap] = useState();
   const mapElement = useRef();
@@ -55,12 +121,15 @@ function App() {
             url: pakistanUrl,
             format: new GeoJSON(),
           }),
-          style: new Style({
-            stroke: new Stroke({
-              color: "green",
-              width: 3,
-            }),
-          }),
+          // style: new Style({
+          //   stroke: new Stroke({
+          //     color: "green",
+          //     width: 3,
+          //   }),
+          // }),
+          style: (feature) => {
+            return styles[feature.getGeometry().getType()];
+          },
         }),
         // new VectorTileLayer({
         //   declutter: true,
