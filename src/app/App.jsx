@@ -13,6 +13,7 @@ import VectorTileLayer from "ol/layer/VectorTile";
 import VectorTileSource from "ol/source/VectorTile";
 import pakistanUrl from "../assets/geojson/pakistan.geojson";
 import marker from "../assets/maps/marker.png"
+import { transform } from "ol/proj";
 import {
   defaults,
   ScaleLine,
@@ -151,6 +152,7 @@ function App() {
       view: new View({
         center: [7000000, 3000000],
         zoom: 3,
+        // projection: 'EPSG:4326'
       }),
     });
     // Hook to triger addfeature funtion to add a feature in main-layer source.
@@ -182,6 +184,14 @@ function App() {
   //   layer && layer.getSource().removeFeature(feature);
   //   setMap(initialMap);
   //   }
+  
+  // Transform ( projection ) feautre coordinates or transform coodinates and make feature from these transformed coordinates
+  const tranformProjection = (feature, coordinates) => {
+      // Transforms a coordinate from source projection to destination projection. This returns a new coordinate (and does not modify the original).
+      // we can either trnasform thru coordinates or feature
+      let trans = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+      feature.getGeometry().transform("EPSG:4326", "EPSG:3857");
+  }
 
   return (
     <div
