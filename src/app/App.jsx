@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
+import "./App.css";
 import { Map, View } from "ol";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
@@ -132,21 +133,8 @@ function App() {
           },
           properties: {
             id: 'main-layer',
-            name: 'Portaland',
+            name: 'Pakistan',
           },
-        }),
-        new VectorTileLayer({
-          declutter: true,
-          source: new VectorTileSource({
-            attributions:
-              '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
-              '© <a href="https://www.openstreetmap.org/copyright">' +
-              "OpenStreetMap contributors</a>",
-            format: new MVT(),
-            // url:
-              // "https://api.mapbox.com/styles/v1/shaneraza/cl34a0h6j001814s9fnowgntz/tiles/{z}/{x}/{y}@2x?access_token="+key,
-          }),
-        //   style: createMapboxStreetsV6Style(Style, Fill, Stroke, Icon, Text),TODO: You can styles it as you want using mapbox
         }),
       ],
       view: new View({
@@ -162,6 +150,7 @@ function App() {
   },[]);
 
   // add a feature to a specific layer i.e. 'main-layer'
+  
   const addFeature = () => {
     let markerFeature = new Feature({ geometry: new Point([0, 0]) });
     let layer;
@@ -174,16 +163,15 @@ function App() {
   }
 
   // Remove a feature from a specific layer i.e. 'main-layer'
-  // const removeFeature = (feature) => {
-  //   let layer;
-  //   this.map.getLayers().forEach((lr) => {
-  //     if (lr.getProperties()['id'] === 'main-layer') {
-  //       layer = lr;
-  //     }
-  //   });
-  //   layer && layer.getSource().removeFeature(feature);
-  //   setMap(initialMap);
-  //   }
+  const removeFeature = (feature) => {
+    let layer;
+    this.map.getLayers().forEach((lr) => {
+      if (lr.getProperties()['id'] === 'main-layer') {
+        layer = lr;
+      }
+    });
+    layer && layer.getSource().removeFeature(feature);
+    }
   
   // Transform ( projection ) feautre coordinates or transform coodinates and make feature from these transformed coordinates
   const tranformProjection = (feature, coordinates) => {
@@ -191,14 +179,35 @@ function App() {
       // we can either trnasform thru coordinates or feature
       let trans = transform(coordinates, 'EPSG:3857', 'EPSG:4326');
       feature.getGeometry().transform("EPSG:4326", "EPSG:3857");
-  }
+  };
+
+  const showOrHideLayer = (event) => {
+    map.getLayers().forEach((lr) => {
+      if (lr.getProperties()['id'] === 'main-layer') {
+        // console.log('in here');
+        lr.setVisible(event.target.checked);
+        }
+      });
+    }
 
   return (
+    <Fragment>
     <div
       style={{ height: "100vh", width: "100%" }}
       ref={mapElement}
-      className="map-container"
-    />
+    >
+      <div id="info" className="layer-switcher">
+        <input
+          type="checkbox"
+          name="main-layer"
+          id="lr"
+          defaultChecked
+          onClick={showOrHideLayer}
+        />
+        <label htmlFor="lr">Show / Hide Main Layer</label>
+      </div>
+      </div>
+      </Fragment>
   );
 }
 
