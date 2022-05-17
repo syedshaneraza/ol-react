@@ -7,9 +7,12 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { GeoJSON, MVT } from "ol/format";
 import { Circle, Fill, Icon, Stroke, Style, Text } from 'ol/style';
-// import VectorTileLayer from "ol/layer/VectorTile";
-// import VectorTileSource from "ol/source/VectorTile";
+import { Feature } from "ol";
+import { Point } from "ol/geom";
+import VectorTileLayer from "ol/layer/VectorTile";
+import VectorTileSource from "ol/source/VectorTile";
 import pakistanUrl from "../assets/geojson/pakistan.geojson";
+import marker from "../assets/maps/marker.png"
 import {
   defaults,
   ScaleLine,
@@ -25,12 +28,13 @@ import {
 function App() {
   const style_key = 'cl34a0h6j001814s9fnowgntz'
   const image = new Icon({
-      anchor: [0.5, 38],
-      anchorXUnits: 'fraction',
-      anchorYUnits: 'pixels',
-      src: './assets/maps/marker4.png',
+      anchor: [0.5, 1],
+      imgSize:[32, 48],
+      // anchorXUnits: 'fraction',
+      // anchorYUnits: 'pixels',
+      src: marker,
     });
-    const styles = {
+    let styles = {
       Point: new Style({
         image: image,
       }),
@@ -96,8 +100,9 @@ function App() {
   const mapRef = useRef();
   mapRef.current = map;
 
+  let initialMap;
   useEffect(() => {
-    const initialMap = new Map({
+    initialMap = new Map({
       target: mapElement.current,
       controls: defaults().extend([
         new ScaleLine(),
@@ -121,37 +126,62 @@ function App() {
             url: pakistanUrl,
             format: new GeoJSON(),
           }),
-          // style: new Style({
-          //   stroke: new Stroke({
-          //     color: "green",
-          //     width: 3,
-          //   }),
-          // }),
           style: (feature) => {
             return styles[feature.getGeometry().getType()];
           },
+          properties: {
+            id: 'main-layer',
+            name: 'Portaland',
+          },
         }),
-        // new VectorTileLayer({
-        //   declutter: true,
-        //   source: new VectorTileSource({
-        //     attributions:
-        //       '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
-        //       '© <a href="https://www.openstreetmap.org/copyright">' +
-        //       "OpenStreetMap contributors</a>",
-        //     format: new MVT(),
-        //     url:
-        //       "https://api.mapbox.com/styles/v1/shaneraza/cl34a0h6j001814s9fnowgntz/tiles/{z}/{x}/{y}@2x?access_token="+key,
-        //   }),
-        // //   style: createMapboxStreetsV6Style(Style, Fill, Stroke, Icon, Text),TODO: You can styles it as you want using mapbox
-        // }),
+        new VectorTileLayer({
+          declutter: true,
+          source: new VectorTileSource({
+            attributions:
+              '© <a href="https://www.mapbox.com/map-feedback/">Mapbox</a> ' +
+              '© <a href="https://www.openstreetmap.org/copyright">' +
+              "OpenStreetMap contributors</a>",
+            format: new MVT(),
+            // url:
+              // "https://api.mapbox.com/styles/v1/shaneraza/cl34a0h6j001814s9fnowgntz/tiles/{z}/{x}/{y}@2x?access_token="+key,
+          }),
+        //   style: createMapboxStreetsV6Style(Style, Fill, Stroke, Icon, Text),TODO: You can styles it as you want using mapbox
+        }),
       ],
       view: new View({
         center: [7000000, 3000000],
         zoom: 3,
       }),
     });
+    // Hook to triger addfeature funtion to add a feature in main-layer source.
+    //TODO: This funciton needs to be trigered as per requirements of task
+    addFeature();
     setMap(initialMap);
-  }, []);
+  },[]);
+
+  // add a feature to a specific layer i.e. 'main-layer'
+  const addFeature = () => {
+    let markerFeature = new Feature({ geometry: new Point([0, 0]) });
+    let layer;
+    initialMap.getLayers().forEach((lr) => {
+      if (lr.getProperties()['id'] === 'main-layer') {
+        layer = lr;
+      }
+    });
+    layer && layer.getSource().addFeature(markerFeature);
+  }
+
+  // Remove a feature from a specific layer i.e. 'main-layer'
+  // const removeFeature = (feature) => {
+  //   let layer;
+  //   this.map.getLayers().forEach((lr) => {
+  //     if (lr.getProperties()['id'] === 'main-layer') {
+  //       layer = lr;
+  //     }
+  //   });
+  //   layer && layer.getSource().removeFeature(feature);
+  //   setMap(initialMap);
+  //   }
 
   return (
     <div
