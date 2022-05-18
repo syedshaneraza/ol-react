@@ -146,7 +146,7 @@ function App() {
     // Hook to triger addfeature funtion to add a feature in main-layer source.
     //TODO: This funciton needs to be trigered as per requirements of task
     addFeature();
-
+    
     // TODO: Below is the list of all the event listners available on map instance 
     // singleclick: A true single click with no dragging and no double click. This event is delayed 250ms to ensure that it’s not a double click
     // postrender: Triggered after map is rendered
@@ -156,8 +156,9 @@ function App() {
     // moveend: Triggered after map is moved
     // dblclick: A true double click with no dragging
     // click: A single click with no dragging. Double click will fire two events
+
     //Creating a Map Click Event Listener
-    this.map.on('singleclick', function (e) {
+    map.on('singleclick', function (e) {
       //Perform Task on click
     });
 
