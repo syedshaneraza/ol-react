@@ -10,3 +10,11 @@
   top: 1rem;
   z-index: 1;
 }
+.white-clr {
+  color: antiquewhite;
+}
+.mouse-position {
+  color: antiquewhite;
+  position: absolute;
+  right: 38px;
+}
